@@ -1,3 +1,2 @@
 bin/*
-config/staging.yml
-config/production.yml
+config/[staging|production].yml
