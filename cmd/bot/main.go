@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/bigodines/eggo/config"
+	_ "github.com/bigodines/eggo/lib"
 )
 
 type ()
@@ -22,10 +23,16 @@ func main() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
+	//bot := libbot.New()
+	// this is my pet project, I name methods as I want!!!
+	//bot.Unleash()
+	fmt.Printf("%+v\n", conf)
+
 	fmt.Println("vim-go")
 }
 
 // helper function to figure environment
+// defaults to "development"
 func getEnv() string {
 	env := os.Getenv("ENVIRONMENT")
 	if env == "" {
