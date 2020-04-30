@@ -7,8 +7,10 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"github.com/gempir/go-twitch-irc/v2"
+
 	"github.com/bigodines/eggo/config"
-	_ "github.com/bigodines/eggo/lib"
+	libbot "github.com/bigodines/eggo/lib"
 )
 
 type ()
@@ -23,12 +25,28 @@ func main() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
-	//bot := libbot.New()
-	// this is my pet project, I name methods as I want!!!
-	//bot.Unleash()
-	fmt.Printf("%+v\n", conf)
+	twitchClient := twitch.NewClient(conf.Username, conf.OAuthToken)
+	twitchClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
+		fmt.Println(message.Message)
+	})
 
-	fmt.Println("vim-go")
+	twitchClient.Join("gempir")
+
+	err = twitchClient.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	bot := libbot.New(conf)
+	log.Debug().Msg("Running bot")
+	// this is my pet project, I name methods as I want!!!
+	err = bot.Unleash()
+	if err != nil {
+		panic("sorry j. cannot do it")
+	}
+
+	log.Info().Msg("Done")
+
 }
 
 // helper function to figure environment

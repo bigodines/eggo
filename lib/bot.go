@@ -12,3 +12,7 @@ type (
 func New(c config.Config) *botService {
 	return &botService{}
 }
+
+func (b *botService) Unleash() error {
+	return nil
+}
