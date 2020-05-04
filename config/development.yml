@@ -1,2 +1,6 @@
-channel: "#foobar"
-username: "e_g_g_o_"
+channel: "#e_g_g_o_"
+name: "xxxxx"
+flood: 
+        - enabled: true
+        - lines: 2
+        - interval: 30

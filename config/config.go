@@ -19,7 +19,16 @@ type (
 		// oauth token can't be set in the yml file to prevent people from checking in their tokens
 		OAuthToken string `json:"oauth_token" envconfig:"default=THIS_IS_READ_FROM_ENV"`
 		// bot username (optional)
-		Username string `json:"username" envconfig:"default=eGGo"`
+		Name string `json:"name" envconfig:"-"`
+		// Flood (too many messages) protection configuration
+		Flood FloodConfig `json:"flood" envconfig:"-"`
+	}
+
+	FloodConfig struct {
+		Enabled bool `json:"enabled" envconfig:"-"`
+		Lines   int  `json:"lines" envconfig:"-"`
+		// Interval in seconds
+		Interval int `json:"interval" envconfig:"-"`
 	}
 )
 
@@ -43,13 +52,13 @@ func Load(env string) (Config, error) {
 // configFromFile reads configuration file for environment and return a Config struct
 func configFromFile(env string) (Config, error) {
 	env = strings.ToLower(env)
-	// attempt to read config from {{env}}.yml (defaults to default.yml)
+	// attempt to read config from {{environment}}.yml (defaults to development.yml)
 	var fname string
 	var conf Config
 	if _, err := os.Stat(fmt.Sprintf("config/%s.yml", env)); err == nil {
 		fname = fmt.Sprintf("config/%s.yml", env)
 	} else {
-		fname = fmt.Sprintf("config/default.yml")
+		fname = fmt.Sprintf("config/development.yml")
 	}
 
 	ymlFile, err := ioutil.ReadFile(fname)
