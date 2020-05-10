@@ -20,11 +20,11 @@ type (
 		OAuthToken string `json:"oauth_token" envconfig:"default=THIS_IS_READ_FROM_ENV"`
 		// bot username (optional)
 		Name string `json:"name" envconfig:"-"`
-		// Flood (too many messages) protection configuration
-		Flood FloodConfig `json:"flood" envconfig:"-"`
+		// Spam (advertisement) protection configuration
+		Spam SpamConfig `json:"spam" envconfig:"-"`
 	}
 
-	FloodConfig struct {
+	SpamConfig struct {
 		Enabled bool `json:"enabled" envconfig:"-"`
 		Lines   int  `json:"lines" envconfig:"-"`
 		// Interval in seconds

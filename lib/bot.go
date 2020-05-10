@@ -8,14 +8,48 @@ import (
 
 type (
 	botService struct {
-		conf config.Config
+		conf       config.Config
+		middleware map[string][]Middleware
+	}
+
+	Middleware func(twitch.Message) error
+
+	// MessageHandler is the interface shared by all message handlers
+	MessageHandler interface {
+		Handle(twitch.Message) error
 	}
 )
 
+var (
+	validEvents = []string{"onPrivateMessages"}
+)
+
 func New(c config.Config) *botService {
-	return &botService{
+	bot := &botService{
 		conf: c,
 	}
+
+	return bot
+}
+
+func (b *botService) Use(eventName string, mw Middleware) {
+	if validEvent(eventName) == false {
+		log.Warn().Str("event", eventName).Msg("you tried to add middleware to invalid event type")
+		return
+	}
+	if len(b.middleware[eventName]) == 0 {
+		b.middleware[eventName] = make([]Middleware, 0)
+	}
+	b.middleware[eventName] = append(b.middleware[eventName], mw)
+}
+
+func validEvent(name string) bool {
+	for _, v := range validEvents {
+		if v == name {
+			return true
+		}
+	}
+	return false
 }
 
 func (b *botService) Unleash() error {
@@ -30,6 +64,7 @@ func (b *botService) Unleash() error {
 	if err != nil {
 		return err
 	}
+
 	log.Debug().Msg("Connected")
 
 	return nil

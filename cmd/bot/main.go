@@ -8,6 +8,7 @@ import (
 
 	"github.com/bigodines/eggo/config"
 	libbot "github.com/bigodines/eggo/lib"
+	mw "github.com/bigodines/eggo/lib/middleware"
 )
 
 type ()
@@ -24,6 +25,7 @@ func main() {
 
 	log.Debug().Interface("Config", conf).Msg("Config loaded")
 	bot := libbot.New(conf)
+	bot.Use("onPrivateMessages", mw.Spam())
 	log.Debug().Msg("Running bot")
 	// this is my pet project, I name methods as I want!!!
 	err = bot.Unleash()
