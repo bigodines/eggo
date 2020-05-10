@@ -25,8 +25,10 @@ var (
 )
 
 func New(c config.Config) *botService {
+	mw := make(map[string][]Middleware, 0)
 	bot := &botService{
-		conf: c,
+		conf:       c,
+		middleware: mw,
 	}
 
 	return bot
@@ -53,11 +55,17 @@ func validEvent(name string) bool {
 	return false
 }
 
+func (b *botService) onPvtMsg(m twitch.PrivateMessage) {
+	for _, mw := range b.middleware["onPrivateMessages"] {
+		log.Debug().Msg("calling")
+		mw(&m)
+	}
+
+}
+
 func (b *botService) Unleash() error {
 	twitchClient := twitch.NewClient(b.conf.Name, b.conf.OAuthToken)
-	twitchClient.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		log.Debug().Msg(message.Message)
-	})
+	twitchClient.OnPrivateMessage(b.onPvtMsg)
 
 	twitchClient.Join(b.conf.Name)
 
