@@ -32,6 +32,7 @@ func New(c config.Config) *botService {
 	return bot
 }
 
+// Use adds a middleware as a listener to an event
 func (b *botService) Use(eventName string, mw Middleware) {
 	if validEvent(eventName) == false {
 		log.Warn().Str("event", eventName).Msg("you tried to add middleware to invalid event type")

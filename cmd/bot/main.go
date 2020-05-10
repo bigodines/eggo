@@ -25,8 +25,11 @@ func main() {
 
 	log.Debug().Interface("Config", conf).Msg("Config loaded")
 	bot := libbot.New(conf)
+	// add channel protection middlewares
 	bot.Use("onPrivateMessages", mw.Spam())
+
 	log.Debug().Msg("Running bot")
+
 	// this is my pet project, I name methods as I want!!!
 	err = bot.Unleash()
 	if err != nil {
