@@ -2,6 +2,7 @@ package lib
 
 import (
 	"github.com/bigodines/eggo/config"
+
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/rs/zerolog/log"
 )
@@ -21,10 +22,11 @@ type (
 )
 
 var (
+	// TODO: implement missing events and have them as consts
 	validEvents = []string{"onPrivateMessages"}
 )
 
-func New(c config.Config) *botService {
+func NewBot(c config.Config) *botService {
 	mw := make(map[string][]Middleware, 0)
 	bot := &botService{
 		conf:       c,
@@ -57,7 +59,6 @@ func validEvent(name string) bool {
 
 func (b *botService) onPvtMsg(m twitch.PrivateMessage) {
 	for _, mw := range b.middleware["onPrivateMessages"] {
-		log.Debug().Msg("calling")
 		mw(&m)
 	}
 

@@ -1,11 +1,10 @@
-package main
+package middleware
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-func TestX(t *testing.T) {
+func TestUse(t *testing.T) {
 	assert.True(t, true)
 }

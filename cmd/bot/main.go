@@ -24,7 +24,7 @@ func main() {
 	}
 
 	log.Debug().Interface("Config", conf).Msg("Config loaded")
-	bot := libbot.New(conf)
+	bot := libbot.NewBot(conf)
 	// add channel protection middlewares
 	bot.Use("onPrivateMessages", mw.Spam())
 
