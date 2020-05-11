@@ -24,4 +24,9 @@ func TestUse(t *testing.T) {
 	b.onPvtMsg(twitch.PrivateMessage{})
 	assert.True(t, called)
 	assert.Equal(t, 1, len(b.middleware["onPrivateMessage"]))
+
+	// test invalid events
+	b.Use("bogus", fakeMW)
+	assert.Equal(t, 0, len(b.middleware["bogus"]))
+
 }
