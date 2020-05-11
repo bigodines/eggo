@@ -23,7 +23,7 @@ type (
 
 var (
 	// TODO: implement missing events and have them as consts
-	validEvents = []string{"onPrivateMessages"}
+	validEvents = []string{"onPrivateMessage"}
 )
 
 func NewBot(c config.Config) *botService {
@@ -58,7 +58,7 @@ func validEvent(name string) bool {
 }
 
 func (b *botService) onPvtMsg(m twitch.PrivateMessage) {
-	for _, mw := range b.middleware["onPrivateMessages"] {
+	for _, mw := range b.middleware["onPrivateMessage"] {
 		mw(&m)
 	}
 
