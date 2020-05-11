@@ -5,7 +5,7 @@ CMDS=$(filter-out internal, $(notdir $(wildcard cmd/*)))
 ### Local dev ----
 .PHONY: test
 test:
-	go test --cover --race -v ./lib/*
+	go test --cover --race -v ./...
 
 .PHONY: build
 build: $(CMDS)
