@@ -8,16 +8,18 @@ import (
 )
 
 type (
-	botService struct {
-		conf       config.Config
-		middleware map[string][]Middleware
+	// Middleware is the interface every message handler must implement
+	Middleware func(twitch.Message, chan Command) error
+
+	// Commands are actions the bot can take
+	Command interface {
+		Execute() error
 	}
 
-	Middleware func(twitch.Message) error
-
-	// MessageHandler is the interface shared by all message handlers
-	MessageHandler interface {
-		Handle(twitch.Message) error
+	botService struct {
+		conf  config.Config
+		mw    map[string][]Middleware
+		cmdCh chan Command
 	}
 )
 
@@ -28,9 +30,12 @@ var (
 
 func NewBot(c config.Config) *botService {
 	mw := make(map[string][]Middleware, 0)
+	cmdCh := make(chan Command, 10)
+
 	bot := &botService{
-		conf:       c,
-		middleware: mw,
+		conf:  c,
+		mw:    mw,
+		cmdCh: cmdCh,
 	}
 
 	return bot
@@ -42,10 +47,10 @@ func (b *botService) Use(eventName string, mw Middleware) {
 		log.Warn().Str("event", eventName).Msg("you tried to add middleware to invalid event type")
 		return
 	}
-	if len(b.middleware[eventName]) == 0 {
-		b.middleware[eventName] = make([]Middleware, 0)
+	if len(b.mw[eventName]) == 0 {
+		b.mw[eventName] = make([]Middleware, 0)
 	}
-	b.middleware[eventName] = append(b.middleware[eventName], mw)
+	b.mw[eventName] = append(b.mw[eventName], mw)
 }
 
 func validEvent(name string) bool {
@@ -58,8 +63,9 @@ func validEvent(name string) bool {
 }
 
 func (b *botService) onPvtMsg(m twitch.PrivateMessage) {
-	for _, mw := range b.middleware["onPrivateMessage"] {
-		mw(&m)
+	for _, mw := range b.mw["onPrivateMessage"] {
+		// TODO: err handle
+		mw(&m, b.cmdCh)
 	}
 
 }
