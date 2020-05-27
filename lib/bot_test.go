@@ -28,5 +28,4 @@ func TestUse(t *testing.T) {
 	// test invalid events
 	b.Use("bogus", fakeMW)
 	assert.Equal(t, 0, len(b.mw["bogus"]))
-
 }
